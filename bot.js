@@ -1,16 +1,25 @@
 require('dotenv').config()
 
-const { Client, Emoji } = require('discord.js')
+const { Client} = require('discord.js')
+
+const Discord = require('discord.js')
 
 const client = new Client()
 
-const PREFIX = '$' 
+const PREFIX = '$'
 
 
 // Log the bot in!
 
 client.login(process.env.DISCORDJS_BOT_TOKEN).then(res => {
-    
+    client.user.setPresence({
+        activity: {
+            name: "Fortnite",
+            type: 'PLAYING',
+            url: 'https://www.epicgames.com/store/en-US/product/fortnite/home'
+        },
+        status: 'online'
+    })    
 })
 
 client.on('message' , (message) => {
@@ -66,6 +75,15 @@ client.on('message' , (message) => {
             msg.then(res => {
                  res.react('👍')
             })
+        }
+
+        if (CMD_NAME === 'help') {
+            const Embed = new Discord.MessageEmbed()
+            .setTitle('List of Commands')
+            .setDescription("kick/ ban | Bans or Kicks a user \n DM| DM's the user as requestes \n Login | Login to your GMAD account \n isuser | Check's if your logged in")
+            .setAuthor("JD")
+
+            message.channel.send(Embed)
         }
     }
 })
