@@ -15,8 +15,7 @@ client.login(process.env.DISCORDJS_BOT_TOKEN).then(res => {
     client.user.setPresence({
         activity: {
             name: "Fortnite",
-            type: 'PLAYING',
-            url: 'https://www.epicgames.com/store/en-US/product/fortnite/home'
+            type: 'PLAYING'
         },
         status: 'online'
     })    
