@@ -1,13 +1,53 @@
 require('dotenv').config()
 
+const firebase = require('firebase')
+
+firebase.default.initializeApp({
+    apiKey: "AIzaSyBaWnG4JhCM0-VHaOs0Wx_n4UYVXeKddvY",
+    authDomain: "gmaservices.firebaseapp.com",
+    databaseURL: "https://gmaservices.firebaseio.com",
+    projectId: "gmaservices",
+    storageBucket: "gmaservices.appspot.com",
+    messagingSenderId: "765106952097",
+    appId: "1:765106952097:web:c1c0346bd95237faf85de0",
+    measurementId: "G-WPQGLXVD9G"
+})
+
+var ArgsLocked = true
+var Loggingin = false
+
 const { Client} = require('discord.js')
 
 const Discord = require('discord.js')
 
+const DMSETT_Z = (username) => {
+    client.on('message' , (message) => {
+        if (message.channel.type === 'dm') {
+            if (message.content === '!y' && Loggingin) {
+                const auth = firebase.default.auth()
+                message.channel.send("Please provide an password").then(() => {
+                    setTimeout(()=> {
+                        const password = message.channel.lastMessage.content
+
+                        auth.signInWithEmailAndPassword(username, password).then(user => {
+                            message.reply("You are now logged in as: " + user.user.displayName)
+                        Loggingin = false
+                        }).catch(err => {
+                            message.reply("Something went wrong " + err)
+                            Loggingin = false
+                        })
+                    },12000)
+                })
+            }
+        }
+    })        
+}
+
+const DMD = DMSETT_Z
+
 const client = new Client()
 
 const PREFIX = '$'
-
 
 // Log the bot in!
 
@@ -15,7 +55,8 @@ client.login(process.env.DISCORDJS_BOT_TOKEN).then(res => {
     client.user.setPresence({
         activity: {
             name: "Fortnite",
-            type: 'PLAYING'
+            type: 'PLAYING',
+            url: 'https://www.epicgames.com/store/en-US/product/fortnite/home'
         },
         status: 'online'
     })    
@@ -68,6 +109,16 @@ client.on('message' , (message) => {
                })
             }
         }
+        
+        if (CMD_NAME === 'Logout') {
+            const auth = firebase.default.auth()
+
+            if (auth.currentUser) {
+                auth.signOut()
+            } else {
+                message.reply("No user is currently logged in!")
+            }
+        }
 
         if (CMD_NAME === 'DM') {
             let msg = message.author.send('You asked me to DM you')
@@ -79,25 +130,32 @@ client.on('message' , (message) => {
         if (CMD_NAME === 'help') {
             const Embed = new Discord.MessageEmbed()
             .setTitle('List of Commands')
-            .setDescription("kick/ ban | Bans or Kicks a user \n DM| DM's the user as requestes \n Login | Login to your GMAD account \n isuser | Check's if your logged in")
+            .setDescription("kick/ ban | Bans or Kicks a user |  DM | DM's the user as requestes | Login | Login to your GMAD account | isuser | Check's if your logged in | help | provides a list of commands")
             .setAuthor("JD")
 
             message.channel.send(Embed)
         }
-    }
-})
 
-client.on('message', message => {
-    
-    if (message.channel.type === 'dm') {
-        if (message.mentions && !message.author.bot) {
-        message.react('👍')
-        let msg = message.author.send('Hi how are you?')
-        msg.then(res => {
-        })
-    } else {
-            message.react('💖')
-    }
+        if (CMD_NAME === 'Login') {
+            const user = message.author
+            const DM = DMD
+            message.channel.send('Whats your username/ email').then(res => {
+                    setTimeout(() => {
+                    if (message.channel.lastMessage.author.tag == user.tag) {
+                            message.reply("I will DM you with further instructions")
+                            const StoredEmail = message.channel.lastMessage.content + '@' + args[0]
+                            message.author.send("Instructions to Login with account: " + StoredEmail)
+                            message.author.send('Please confirm by "!y"')
+                            Loggingin = true
+                            DM(StoredEmail)
+                    } else {
+                        message.channel.send('Took too long to Login')
+                    }
+                },16000)
+            }).catch(err => {
+                return err;
+            })
+        }
     }
 })
 
