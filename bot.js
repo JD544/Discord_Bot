@@ -3,16 +3,8 @@ require('dotenv').config()
 const firebase = require('firebase')
 
 firebase.default.initializeApp({
-    apiKey: "AIzaSyBaWnG4JhCM0-VHaOs0Wx_n4UYVXeKddvY",
-    authDomain: "gmaservices.firebaseapp.com",
-    databaseURL: "https://gmaservices.firebaseio.com",
-    projectId: "gmaservices",
-    storageBucket: "gmaservices.appspot.com",
-    messagingSenderId: "765106952097",
-    appId: "1:765106952097:web:c1c0346bd95237faf85de0",
-    measurementId: "G-WPQGLXVD9G"
+    //Your config goes here
 })
-
 var ArgsLocked = true
 var Loggingin = false
 
